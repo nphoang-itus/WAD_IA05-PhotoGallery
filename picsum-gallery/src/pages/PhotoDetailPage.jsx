@@ -1,58 +1,31 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Typography,
-  Box,
-  Alert,
-  Button,
-  Paper,
-} from "@mui/material";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import { Container, Typography, Box, Alert, Button, Paper } from "@mui/material";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Loader from "../components/Loader";
-import { Link } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Icon mũi tên
+import usePhotoDetail from "../hooks/usePhotoDetail";
 
 const PhotoDetailPage = () => {
   const { id } = useParams();
-
-  const [photo, setPhoto] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchPhotoDetails = async () => {
-      setLoading(false);
-      setError(null);
-
-      try {
-        const response = await axios.get(`https://picsum.photos/id/${id}/info`);
-
-        setPhoto(response.data);
-      } catch (err) {
-        setError("Không thể tải thông tin ảnh.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPhotoDetails();
-  }, [id]);
+  const { photo, loading, error } = usePhotoDetail(id);
 
   if (loading) {
-    return <Loader />;
+    return <Loader message="Đang tải thông tin ảnh..." fullHeight />;
   }
 
   if (error) {
     return (
-      <Container
-        maxWidth="sm"
-        sx={{
-          py: 4,
-        }}
-      >
-        <Alert severity="error">{error}</Alert>
+      <Container maxWidth="sm" sx={{ py: 4 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+        <Button
+          component={RouterLink}
+          to="/photos"
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+        >
+          Quay lại danh sách
+        </Button>
       </Container>
     );
   }
@@ -62,20 +35,13 @@ const PhotoDetailPage = () => {
   }
 
   return (
-    <Container
-      maxWidth="md"
-      sx={{
-        py: 4,
-      }}
-    >
+    <Container maxWidth="md" sx={{ py: 4 }}>
       <Button
-        component={Link}
+        component={RouterLink}
         to="/photos"
         variant="outlined"
         startIcon={<ArrowBackIcon />}
-        sx={{
-          mb: 3,
-        }}
+        sx={{ mb: 3 }}
       >
         Quay lại danh sách
       </Button>
@@ -90,24 +56,18 @@ const PhotoDetailPage = () => {
             height: "auto",
             borderRadius: "4px 4px 0 0",
           }}
+          loading="lazy"
         />
 
-        <Box
-          sx={{
-            p: 3,
-          }}
-        >
-          {/* Yêu cầu: Tiêu đề (dùng placeholder vì API không có) */}
+        <Box sx={{ p: 3 }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Một tác phẩm tuyệt vời
           </Typography>
 
-          {/* Yêu cầu: Tên tác giả */}
           <Typography variant="h6" component="p" color="text.secondary">
             Tác giả: {photo.author}
           </Typography>
 
-          {/* Yêu cầu: Mô tả (dùng placeholder) */}
           <Typography variant="body1" sx={{ mt: 2 }}>
             Đây là mô tả placeholder cho bức ảnh. API của Lorem Picsum không
             cung cấp mô tả, vì vậy chúng ta sẽ hiển thị nội dung này để đáp ứng

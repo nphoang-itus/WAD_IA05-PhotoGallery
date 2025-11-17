@@ -1,41 +1,42 @@
-import React from "react";
+import { forwardRef } from "react";
+import PropTypes from "prop-types";
 import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const PhotoCard = ({ photo }) => {
-  return (
-    <Grid
+const PhotoCard = forwardRef(({ photo }, ref) => (
+  <Grid item xs={12} sm={6} md={4} lg={3} ref={ref}>
+    <Card
       sx={{
-        gridColumn: {
-          xs: "span 12", // Chiếm toàn bộ cột trên màn hình nhỏ
-          sm: "span 6", // Chiếm 6 cột trên màn hình nhỏ
-          md: "span 4", // Chiếm 4 cột trên màn hình trung bình
-          lg: "span 3", // Chiếm 3 cột trên màn hình lớn
-        },
+        height: "100%",
+        textDecoration: "none",
       }}
+      component={Link}
+      to={`/photos/${photo.id}`}
     >
-      <Card
-        sx={{
-          height: "100%",
-          textDecoration: "none",
-        }}
-        component={Link}
-        to={`/photos/${photo.id}`}
-      >
-        <CardMedia
-          component="img"
-          height="200"
-          image={photo.download_url}
-          alt={photo.author}
-        />
-        <CardContent>
-          <Typography variant="h6" component="div" noWrap>
-            {photo.author}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Grid>
-  );
+      <CardMedia
+        component="img"
+        height="200"
+        image={photo.download_url}
+        alt={photo.author}
+        loading="lazy"
+      />
+      <CardContent>
+        <Typography variant="h6" component="div" noWrap>
+          {photo.author}
+        </Typography>
+      </CardContent>
+    </Card>
+  </Grid>
+));
+
+PhotoCard.displayName = "PhotoCard";
+
+PhotoCard.propTypes = {
+  photo: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    download_url: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default PhotoCard;

@@ -1,19 +1,33 @@
-import React from "react";
-import { Box, CircularProgress } from "@mui/material";
+import PropTypes from "prop-types";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
-const Loader = () => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        my: 4, // margin-top = margin-bottom = 4
-      }}
-    >
-      <CircularProgress />
-    </Box>
-  );
+/**
+ * Reusable loader that optionally shows a helper message.
+ */
+const Loader = ({ message, fullHeight = false }) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      my: 4,
+      minHeight: fullHeight ? "50vh" : "auto",
+      gap: 2,
+    }}
+  >
+    <CircularProgress />
+    {message && (
+      <Typography variant="body2" color="text.secondary">
+        {message}
+      </Typography>
+    )}
+  </Box>
+);
+
+Loader.propTypes = {
+  message: PropTypes.string,
+  fullHeight: PropTypes.bool,
 };
 
 export default Loader;
